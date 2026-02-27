@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { sessionId, taskResults, answers, totalDuration } = body as {
     sessionId?: string;
-    taskResults?: { taskId: string; durationSeconds: number; blurCount?: number }[];
+    taskResults?: { taskId: string; durationSeconds: number; blurCount?: number; completed?: boolean }[];
     answers?: { questionId: string; value: any }[];
     totalDuration?: number;
   };
@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
           taskId: t.taskId,
           durationSeconds: Math.round(t.durationSeconds),
           blurCount: t.blurCount ?? null,
+          completed: t.completed ?? true,
           testSessionId: sessionId,
         },
       })

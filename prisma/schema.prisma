@@ -17,6 +17,13 @@ enum QuestionType {
 enum TestStatus {
   draft
   published
+  closed
+}
+
+enum SessionValidity {
+  pending
+  approved
+  rejected
 }
 
 model Test {
@@ -56,17 +63,19 @@ model Question {
 }
 
 model TestSession {
-  id           String       @id @default(uuid())
+  id           String          @id @default(uuid())
   testId       String
   prolificPid  String
   studyId      String
   sessionId    String
-  startTime    DateTime     @default(now())
+  startTime    DateTime        @default(now())
   endTime      DateTime?
   totalDuration Int?
-  flagged      Boolean      @default(false)
+  flagged      Boolean         @default(false)
   userAgent    String?
-  test         Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
+  source       String          @default("prolific")
+  validity     SessionValidity @default(pending)
+  test         Test            @relation(fields: [testId], references: [id], onDelete: Cascade)
   answers      Answer[]
   taskResults  TaskResult[]
 
@@ -83,11 +92,12 @@ model Answer {
 }
 
 model TaskResult {
-  id             String   @id @default(uuid())
+  id             String      @id @default(uuid())
   testSessionId  String
   taskId         String
   durationSeconds Int
   blurCount      Int?
+  completed      Boolean     @default(true)
   session        TestSession @relation(fields: [testSessionId], references: [id], onDelete: Cascade)
   task           Task        @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }

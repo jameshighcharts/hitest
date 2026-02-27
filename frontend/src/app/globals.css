@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand palette — white surfaces, purple only as accent */
+    --background: 240 20% 98%;          /* #F8F8FC — barely tinted white */
+    --foreground: 236 20% 38%;          /* #5C5F8A text */
+
+    --card: 0 0% 100%;                  /* pure white cards */
+    --card-foreground: 236 20% 38%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 236 20% 38%;
+
+    --primary: 235 74% 76%;             /* #9DA4F0 brand purple-blue */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 12% 95%;           /* #F1F1F5 — barely grey */
+    --secondary-foreground: 236 15% 45%;
+
+    --muted: 240 10% 96%;               /* #F4F4F6 — near white */
+    --muted-foreground: 236 12% 58%;
+
+    --accent: 235 50% 94%;              /* #ECEEFF — soft pastel hover */
+    --accent-foreground: 235 50% 35%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 12% 89%;              /* #E2E2E9 — neutral soft border */
+    --input: 240 12% 89%;
+    --ring: 235 74% 76%;
+
+    --radius: 0.5rem;
+
+    /* Sidebar */
+    --sidebar-background: #B5BAF4;
+    --sidebar-foreground: rgba(255,255,255,0.65);
+    --sidebar-primary: rgba(255,255,255,0.25);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: rgba(255,255,255,0.25);
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: rgba(255,255,255,0.15);
+    --sidebar-ring: rgba(255,255,255,0.4);
+  }
+
+  .dark {
+    --background: 236 28% 12%;
+    --foreground: 240 60% 90%;
+
+    --card: 236 28% 16%;
+    --card-foreground: 240 60% 90%;
+
+    --popover: 236 28% 16%;
+    --popover-foreground: 240 60% 90%;
+
+    --primary: 235 74% 83%;
+    --primary-foreground: 236 20% 20%;
+
+    --secondary: 236 25% 25%;
+    --secondary-foreground: 240 60% 85%;
+
+    --muted: 236 25% 22%;
+    --muted-foreground: 236 15% 60%;
+
+    --accent: 236 25% 28%;
+    --accent-foreground: 240 60% 85%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 236 25% 25%;
+    --input: 236 25% 25%;
+    --ring: 235 74% 83%;
+
+    /* Sidebar stays the same in dark mode */
+    --sidebar-background: #B5BAF4;
+    --sidebar-foreground: rgba(255,255,255,0.65);
+    --sidebar-primary: rgba(255,255,255,0.25);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: rgba(255,255,255,0.25);
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: rgba(255,255,255,0.15);
+    --sidebar-ring: rgba(255,255,255,0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Sidebar: hover (non-active) gets lighter overlay than active */
+  [data-sidebar="menu-button"]:hover:not([data-active="true"]) {
+    background: rgba(255,255,255,0.12) !important;
+    color: #ffffff !important;
+  }
+  /* Sidebar: active state */
+  [data-sidebar="menu-button"][data-active="true"] {
+    background: rgba(255,255,255,0.25) !important;
+    color: #ffffff !important;
+  }
+}

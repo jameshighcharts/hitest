@@ -7,7 +7,10 @@ export async function GET(req: NextRequest) {
   const auth = requireAdminApi(req);
   if (auth) return auth;
 
-  const tests = await prisma.test.findMany({ orderBy: { createdAt: "desc" } });
+  const tests = await prisma.test.findMany({
+    orderBy: { createdAt: "desc" },
+    include: { _count: { select: { sessions: true, tasks: true, questions: true } } },
+  });
   return NextResponse.json({ tests });
 }
 

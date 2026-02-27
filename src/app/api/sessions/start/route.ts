@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { testId, prolificPid, studyId, sessionId, userAgent } = body;
+  const { testId, prolificPid, studyId, sessionId, userAgent, source } = body;
   if (!testId || !prolificPid || !studyId || !sessionId) {
     return NextResponse.json({ error: "Missing Prolific parameters" }, { status: 400 });
   }
@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
       studyId,
       sessionId,
       userAgent,
+      source: source ?? "prolific",
     },
   });
 
