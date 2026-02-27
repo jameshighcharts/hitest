@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum QuestionType {
+  text
+  textarea
+  multipleChoice
+  scale1to5
+}
+
+enum TestStatus {
+  draft
+  published
+}
+
+model Test {
+  id              String       @id @default(uuid())
+  title           String
+  description     String?
+  githubDemoUrl   String
+  completionCode  String
+  status          TestStatus   @default(draft)
+  minTotalSeconds Int?
+  createdAt       DateTime     @default(now())
+  tasks           Task[]
+  questions       Question[]
+  sessions        TestSession[]
+}
+
+model Task {
+  id              String   @id @default(uuid())
+  testId          String
+  instructionText String
+  minTimeSeconds  Int?
+  order           Int
+  test            Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  results         TaskResult[]
+}
+
+model Question {
+  id        String        @id @default(uuid())
+  testId    String
+  type      QuestionType
+  label     String
+  options   Json?
+  required  Boolean       @default(true)
+  order     Int
+  test      Test          @relation(fields: [testId], references: [id], onDelete: Cascade)
+  answers   Answer[]
+}
+
+model TestSession {
+  id           String       @id @default(uuid())
+  testId       String
+  prolificPid  String
+  studyId      String
+  sessionId    String
+  startTime    DateTime     @default(now())
+  endTime      DateTime?
+  totalDuration Int?
+  flagged      Boolean      @default(false)
+  userAgent    String?
+  test         Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
+  answers      Answer[]
+  taskResults  TaskResult[]
+
+  @@unique([testId, prolificPid])
+}
+
+model Answer {
+  id             String   @id @default(uuid())
+  testSessionId  String
+  questionId     String
+  value          Json
+  session        TestSession @relation(fields: [testSessionId], references: [id], onDelete: Cascade)
+  question       Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model TaskResult {
+  id             String   @id @default(uuid())
+  testSessionId  String
+  taskId         String
+  durationSeconds Int
+  blurCount      Int?
+  session        TestSession @relation(fields: [testSessionId], references: [id], onDelete: Cascade)
+  task           Task        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
