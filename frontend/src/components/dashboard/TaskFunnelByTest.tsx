@@ -1,15 +1,8 @@
 "use client";
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
+import type { Point } from "highcharts";
+import { Chart, Credits } from "@highcharts/react";
+import { BarSeries } from "@highcharts/react/series/Bar";
 
 interface TaskEntry {
   taskId: string;
@@ -24,11 +17,11 @@ interface TestFunnel {
   tasks: TaskEntry[];
 }
 
-function barColor(rate: number | null) {
-  if (rate === null) return "hsl(236 15% 80%)";
-  if (rate >= 80) return "hsl(142 71% 45%)";
-  if (rate >= 50) return "hsl(38 92% 50%)";
-  return "hsl(0 84% 60%)";
+function barColor(rate: number | null): string {
+  if (rate === null) return "hsl(236, 15%, 80%)";
+  if (rate >= 80) return "hsl(142, 71%, 45%)";
+  if (rate >= 50) return "hsl(38, 92%, 50%)";
+  return "hsl(0, 84%, 60%)";
 }
 
 export function TaskFunnelByTest({ data }: { data: TestFunnel[] }) {
@@ -43,58 +36,80 @@ export function TaskFunnelByTest({ data }: { data: TestFunnel[] }) {
   return (
     <div className="flex flex-col gap-6">
       {data.slice(0, 3).map((test) => {
-        const chartData = test.tasks.map((t) => ({
+        const pointData = test.tasks.map((t) => ({
           name: `T${t.order}`,
-          rate: t.completionRate ?? 0,
-          label: t.instructionText.slice(0, 40) + (t.instructionText.length > 40 ? "…" : ""),
-          completionRate: t.completionRate,
+          y: t.completionRate ?? 0,
+          color: barColor(t.completionRate),
+          label:
+            t.instructionText.slice(0, 40) +
+            (t.instructionText.length > 40 ? "…" : ""),
         }));
 
         return (
           <div key={test.testId}>
-            <p className="mb-2 text-xs font-medium text-muted-foreground truncate">{test.testTitle}</p>
-            <ResponsiveContainer width="100%" height={120}>
-              <BarChart
-                data={chartData}
-                layout="vertical"
-                margin={{ top: 0, right: 8, left: 8, bottom: 0 }}
-              >
-                <CartesianGrid horizontal={false} strokeDasharray="3 3" stroke="hsl(240 12% 89%)" />
-                <XAxis
-                  type="number"
-                  domain={[0, 100]}
-                  tick={{ fontSize: 10, fill: "hsl(236 12% 58%)" }}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(v) => `${v}%`}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  tick={{ fontSize: 10, fill: "hsl(236 12% 58%)" }}
-                  tickLine={false}
-                  axisLine={false}
-                  width={24}
-                />
-                <Tooltip
-                  contentStyle={{
-                    background: "#ffffff",
-                    border: "1px solid hsl(240 12% 89%)",
-                    borderRadius: 6,
-                    fontSize: 11,
-                  }}
-                  formatter={(value, _name, props) => [
-                    `${value}%`,
-                    props.payload?.label ?? "Completion",
-                  ]}
-                />
-                <Bar dataKey="rate" radius={[0, 3, 3, 0]} maxBarSize={14}>
-                  {chartData.map((entry, i) => (
-                    <Cell key={i} fill={barColor(entry.completionRate)} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <p className="mb-2 text-xs font-medium text-muted-foreground truncate">
+              {test.testTitle}
+            </p>
+            <Chart
+              containerProps={{ style: { width: "100%" } }}
+              options={{
+                chart: {
+                  height: Math.max(120, test.tasks.length * 26 + 40),
+                  backgroundColor: "transparent",
+                  style: { fontFamily: "inherit" },
+                  margin: [8, 20, 30, 52],
+                },
+                xAxis: {
+                  categories: pointData.map((d) => d.name),
+                  tickLength: 0,
+                  lineWidth: 0,
+                  gridLineWidth: 0,
+                  labels: {
+                    style: { color: "hsl(236, 12%, 58%)", fontSize: "11px" },
+                    x: -4,
+                  },
+                },
+                yAxis: {
+                  min: 0,
+                  max: 100,
+                  title: { text: undefined },
+                  gridLineColor: "hsl(240, 12%, 89%)",
+                  gridLineDashStyle: "Dash",
+                  labels: {
+                    format: "{value}%",
+                    style: { color: "hsl(236, 12%, 58%)", fontSize: "10px" },
+                    y: 12,
+                  },
+                },
+                tooltip: {
+                  backgroundColor: "#ffffff",
+                  borderColor: "hsl(240, 12%, 89%)",
+                  borderRadius: 6,
+                  shadow: false,
+                  useHTML: true,
+                  style: { fontSize: "11px", color: "hsl(236, 20%, 38%)" },
+                  formatter: function (this: Point) {
+                    const d = pointData[this.index];
+                    return `${d.label}<br/><b>${this.y}%</b>`;
+                  },
+                },
+                plotOptions: {
+                  bar: {
+                    borderRadius: 3,
+                    maxPointWidth: 14,
+                    colorByPoint: true,
+                  },
+                },
+                legend: { enabled: false },
+                credits: { enabled: false },
+              }}
+            >
+              <BarSeries
+                data={pointData}
+                options={{ name: "Completion", colorByPoint: true }}
+              />
+              <Credits enabled={false} />
+            </Chart>
           </div>
         );
       })}

@@ -1,6 +1,7 @@
 "use client";
 
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { Chart, Credits } from "@highcharts/react";
+import { PieSeries } from "@highcharts/react/series/Pie";
 
 interface SourceEntry {
   source: string;
@@ -8,10 +9,10 @@ interface SourceEntry {
 }
 
 const COLORS = [
-  "hsl(235 74% 76%)",
-  "hsl(235 50% 87%)",
-  "hsl(235 30% 65%)",
-  "hsl(235 15% 80%)",
+  "hsl(235, 74%, 76%)",
+  "hsl(235, 50%, 87%)",
+  "hsl(235, 30%, 65%)",
+  "hsl(235, 15%, 80%)",
 ];
 
 export function SourceBreakdownChart({ data }: { data: SourceEntry[] }) {
@@ -24,37 +25,56 @@ export function SourceBreakdownChart({ data }: { data: SourceEntry[] }) {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
-      <PieChart>
-        <Pie
-          data={data}
-          dataKey="count"
-          nameKey="source"
-          cx="50%"
-          cy="50%"
-          outerRadius={70}
-          innerRadius={36}
-        >
-          {data.map((_, i) => (
-            <Cell key={i} fill={COLORS[i % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip
-          contentStyle={{
-            background: "#ffffff",
-            border: "1px solid hsl(240 12% 89%)",
-            borderRadius: 6,
-            fontSize: 12,
-          }}
-        />
-        <Legend
-          iconType="circle"
-          iconSize={8}
-          formatter={(val) => (
-            <span style={{ fontSize: 12, color: "hsl(236 15% 58%)" }}>{val}</span>
-          )}
-        />
-      </PieChart>
-    </ResponsiveContainer>
+    <Chart
+      containerProps={{ style: { width: "100%" } }}
+      options={{
+        chart: {
+          height: 200,
+          backgroundColor: "transparent",
+          style: { fontFamily: "inherit" },
+        },
+        tooltip: {
+          backgroundColor: "#ffffff",
+          borderColor: "hsl(240, 12%, 89%)",
+          borderRadius: 6,
+          shadow: false,
+          style: { fontSize: "12px", color: "hsl(236, 20%, 38%)" },
+          pointFormat: "<b>{point.y}</b> participants ({point.percentage:.1f}%)",
+        },
+        plotOptions: {
+          pie: {
+            innerSize: "52%",
+            dataLabels: { enabled: false },
+            showInLegend: true,
+            borderWidth: 0,
+          },
+        },
+        legend: {
+          align: "center",
+          verticalAlign: "bottom",
+          layout: "horizontal",
+          itemStyle: {
+            fontSize: "12px",
+            color: "hsl(236, 15%, 58%)",
+            fontWeight: "normal",
+            fontFamily: "inherit",
+          },
+          symbolRadius: 4,
+          symbolHeight: 8,
+          symbolWidth: 8,
+        },
+        credits: { enabled: false },
+      }}
+    >
+      <PieSeries
+        data={data.map((d, i) => ({
+          name: d.source,
+          y: d.count,
+          color: COLORS[i % COLORS.length],
+        }))}
+        options={{ name: "Participants" }}
+      />
+      <Credits enabled={false} />
+    </Chart>
   );
 }
