@@ -36,14 +36,14 @@
     --radius: 0.5rem;
 
     /* Sidebar */
-    --sidebar-background: #B5BAF4;
-    --sidebar-foreground: rgba(255,255,255,0.65);
-    --sidebar-primary: rgba(255,255,255,0.25);
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: rgba(255,255,255,0.25);
+    --sidebar-background: rgba(181,186,244,0.15);
+    --sidebar-foreground: #7a7eaa;
+    --sidebar-primary: #B5BAF4;
+    --sidebar-primary-foreground: #3D3F6E;
+    --sidebar-accent: #B5BAF4;
     --sidebar-accent-foreground: #ffffff;
-    --sidebar-border: rgba(255,255,255,0.15);
-    --sidebar-ring: rgba(255,255,255,0.4);
+    --sidebar-border: rgba(181,186,244,0.35);
+    --sidebar-ring: rgba(181,186,244,0.3);
   }
 
   .dark {
@@ -76,14 +76,14 @@
     --ring: 235 74% 83%;
 
     /* Sidebar stays the same in dark mode */
-    --sidebar-background: #B5BAF4;
-    --sidebar-foreground: rgba(255,255,255,0.65);
-    --sidebar-primary: rgba(255,255,255,0.25);
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: rgba(255,255,255,0.25);
+    --sidebar-background: rgba(181,186,244,0.15);
+    --sidebar-foreground: #7a7eaa;
+    --sidebar-primary: #B5BAF4;
+    --sidebar-primary-foreground: #3D3F6E;
+    --sidebar-accent: #B5BAF4;
     --sidebar-accent-foreground: #ffffff;
-    --sidebar-border: rgba(255,255,255,0.15);
-    --sidebar-ring: rgba(255,255,255,0.4);
+    --sidebar-border: rgba(181,186,244,0.35);
+    --sidebar-ring: rgba(181,186,244,0.3);
   }
 }
 
@@ -93,18 +93,36 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Tabular lining numbers everywhere a number appears */
+  p, span, td, th, div {
+    font-variant-numeric: tabular-nums;
   }
 }
 
 @layer utilities {
-  /* Sidebar: hover (non-active) gets lighter overlay than active */
+  /* Sidebar: glassmorphism */
+  [data-sidebar="sidebar"] {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  /* Sidebar: border override */
+  div:has(> [data-sidebar="sidebar"]) {
+    border-color: rgba(181,186,244,0.35) !important;
+    border-width: 1.5px !important;
+  }
+  /* Sidebar: hover (non-active) */
   [data-sidebar="menu-button"]:hover:not([data-active="true"]) {
-    background: rgba(255,255,255,0.12) !important;
-    color: #ffffff !important;
+    background: rgba(181,186,244,0.2) !important;
+    color: #4A4E8F !important;
   }
   /* Sidebar: active state */
   [data-sidebar="menu-button"][data-active="true"] {
-    background: rgba(255,255,255,0.25) !important;
+    background: #B5BAF4 !important;
     color: #ffffff !important;
   }
 }

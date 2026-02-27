@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { Chart, Credits } from "@highcharts/react";
+import { AreaSeries } from "@highcharts/react/series/Area";
 
 interface TrendPoint {
   date: string;
@@ -24,50 +17,74 @@ export function CompletionTrendChart({ data }: { data: TrendPoint[] }) {
     );
   }
 
-  const formatted = data.map((d) => ({
-    ...d,
-    label: new Date(d.date).toLocaleDateString("en-GB", { month: "short", day: "numeric" }),
-  }));
+  const categories = data.map((d) =>
+    new Date(d.date).toLocaleDateString("en-GB", { month: "short", day: "numeric" })
+  );
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
-      <AreaChart data={formatted} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-        <defs>
-          <linearGradient id="completionGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="hsl(235 74% 76%)" stopOpacity={0.35} />
-            <stop offset="95%" stopColor="hsl(235 74% 76%)" stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(240 12% 89%)" />
-        <XAxis
-          dataKey="label"
-          tick={{ fontSize: 11, fill: "hsl(236 12% 58%)" }}
-          tickLine={false}
-          axisLine={false}
-          interval="preserveStartEnd"
-        />
-        <YAxis
-          tick={{ fontSize: 11, fill: "hsl(236 12% 58%)" }}
-          tickLine={false}
-          axisLine={false}
-          allowDecimals={false}
-        />
-        <Tooltip
-          contentStyle={{
-            background: "#ffffff",
-            border: "1px solid hsl(240 12% 89%)",
-            borderRadius: 6,
-            fontSize: 12,
-          }}
-        />
-        <Area
-          type="monotone"
-          dataKey="completions"
-          stroke="hsl(235 74% 76%)"
-          strokeWidth={2}
-          fill="url(#completionGrad)"
-        />
-      </AreaChart>
-    </ResponsiveContainer>
+    <Chart
+      containerProps={{ style: { width: "100%" } }}
+      options={{
+        chart: {
+          height: 200,
+          backgroundColor: "transparent",
+          style: { fontFamily: "inherit" },
+          margin: [4, 8, 28, 32],
+        },
+        xAxis: {
+          categories,
+          tickLength: 0,
+          lineWidth: 0,
+          gridLineWidth: 0,
+          labels: {
+            style: { color: "hsl(236, 12%, 58%)", fontSize: "11px" },
+            step: Math.max(1, Math.ceil(data.length / 6)),
+          },
+        },
+        yAxis: {
+          title: { text: undefined },
+          gridLineColor: "hsl(240, 12%, 89%)",
+          gridLineDashStyle: "Dash",
+          tickAmount: 4,
+          allowDecimals: false,
+          labels: {
+            style: { color: "hsl(236, 12%, 58%)", fontSize: "11px" },
+          },
+        },
+        tooltip: {
+          backgroundColor: "#ffffff",
+          borderColor: "hsl(240, 12%, 89%)",
+          borderRadius: 6,
+          shadow: false,
+          style: { fontSize: "12px", color: "hsl(236, 20%, 38%)" },
+          headerFormat: '<span style="font-size:11px">{point.key}</span><br/>',
+          pointFormat: "Completions: <b>{point.y}</b>",
+        },
+        legend: { enabled: false },
+        credits: { enabled: false },
+      }}
+    >
+      <AreaSeries
+        data={data.map((d) => d.completions)}
+        options={{
+          name: "Completions",
+          color: "hsl(235, 74%, 76%)",
+          fillColor: {
+            linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+            stops: [
+              [0, "hsla(235, 74%, 76%, 0.35)"],
+              [1, "hsla(235, 74%, 76%, 0)"],
+            ] as Array<[number, string]>,
+          },
+          lineWidth: 2,
+          marker: {
+            enabled: false,
+            states: { hover: { enabled: true, radius: 4 } },
+          },
+          states: { hover: { lineWidthPlus: 0 } },
+        }}
+      />
+      <Credits enabled={false} />
+    </Chart>
   );
 }

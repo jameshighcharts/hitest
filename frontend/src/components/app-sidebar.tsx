@@ -36,8 +36,8 @@ export function AppSidebar() {
                   <FlaskConical className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold text-white">HiTest</span>
-                  <span className="text-xs text-white/50">Admin Panel</span>
+                  <span className="font-semibold" style={{ color: "#3D3F6E" }}>HiTest</span>
+                  <span className="text-xs" style={{ color: "#7a7eaa" }}>Admin Panel</span>
                 </div>
               </Link>
             </SidebarMenuButton>
